@@ -27,6 +27,7 @@ public class Decorder {
     private static final String SETTINGS_SECURITY_FILE_LONG_OPT = "settings-security";
     private static final String SETTINGS_FILE_LONG_OPT = "settings";
     private static final String SETTINGS_FILE_SHORT_OPT = "f";
+    private static final String CUSTOM_STRING_OPT = "c";
 
     private static final int MISSING_OR_INVALID_ARGUMENTS_EXIT_CODE = 1;
 
@@ -39,17 +40,19 @@ public class Decorder {
 
         String settingsFileName = commandLine.getOptionValue(SETTINGS_FILE_SHORT_OPT);
         String securityFileName = commandLine.getOptionValue(SETTINGS_SECURITY_FILE_SHORT_OPT);
+        String customString = commandLine.getOptionValue(CUSTOM_STRING_OPT);
 
-        if (settingsFileName == null || securityFileName == null) {
+        if (settingsFileName == null || securityFileName == null || customString == null) {
             printHelp(options);
             System.exit(MISSING_OR_INVALID_ARGUMENTS_EXIT_CODE);
         }
+        if(settingsFileName != null) {
+            File settingsFile = new File(settingsFileName);
 
-        File settingsFile = new File(settingsFileName);
-
-        if (!settingsFile.exists()) {
-            System.out.printf("Settings file : %s does not exist%n", settingsFile.getAbsolutePath());
-            System.exit(MISSING_OR_INVALID_ARGUMENTS_EXIT_CODE);
+            if (!settingsFile.exists()) {
+                System.out.printf("Settings file : %s does not exist%n", settingsFile.getAbsolutePath());
+                System.exit(MISSING_OR_INVALID_ARGUMENTS_EXIT_CODE);
+            }
         }
 
         File securityFile = new File(securityFileName);
@@ -58,8 +61,20 @@ public class Decorder {
             System.out.printf("Security file : %s does not exist%n", securityFile.getAbsolutePath());
             System.exit(MISSING_OR_INVALID_ARGUMENTS_EXIT_CODE);
         }
+        if(settings != null) {
+            printPasswords(settingsFile, securityFile);
+        } else {
+            Settings settings = readSettings(settingsFile);
+            SettingsSecurity settingsSecurity = readSettingsSecurity(securityFile);
 
-        printPasswords(settingsFile, securityFile);
+            String encodedMasterPassword = settingsSecurity.getMaster();
+            String plainTextMasterPassword = decodeMasterPassword(encodedMasterPassword);
+
+            System.out.printf("Master password is : %s%n", plainTextMasterPassword);
+            String plainText = decodePassword(customString, plainTextMasterPassword);
+            System.out.println("Decrypted value: " + plainText);
+            
+        }
     }
 
     private static String decodePassword(String encodedPassword, String key) throws PlexusCipherException {
