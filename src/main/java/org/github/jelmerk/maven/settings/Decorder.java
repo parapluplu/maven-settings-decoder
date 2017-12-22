@@ -28,6 +28,7 @@ public class Decorder {
     private static final String SETTINGS_FILE_LONG_OPT = "settings";
     private static final String SETTINGS_FILE_SHORT_OPT = "f";
     private static final String CUSTOM_OPT = "c";
+    private static final String CUSTOM_LONG_OPT = "string";
 
     private static final int MISSING_OR_INVALID_ARGUMENTS_EXIT_CODE = 1;
 
@@ -96,6 +97,8 @@ public class Decorder {
         Options options = new Options();
         options.addOption(SETTINGS_SECURITY_FILE_SHORT_OPT, SETTINGS_SECURITY_FILE_LONG_OPT, true, "location of settings-security.xml.");
         options.addOption(SETTINGS_FILE_SHORT_OPT, SETTINGS_FILE_LONG_OPT, true, "location of settings.xml file.");
+        options.addOption(CUSTOM_OPT, CUSTOM_LONG_OPT, true, "custom string");
+        
         return options;
     }
 
