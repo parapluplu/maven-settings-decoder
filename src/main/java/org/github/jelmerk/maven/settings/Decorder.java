@@ -54,7 +54,7 @@ public class Decorder {
             System.out.printf("Security file : %s does not exist%n", securityFile.getAbsolutePath());
             System.exit(MISSING_OR_INVALID_ARGUMENTS_EXIT_CODE);
         }
-        if(settingsFile != null) {
+        if(settingsFileName != null) {
             File settingsFile = new File(settingsFileName);
 
             if (!settingsFile.exists()) {
